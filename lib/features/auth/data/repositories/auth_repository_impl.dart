@@ -4,7 +4,7 @@ import 'package:blog_app/core/error/failures.dart';
 import 'package:fpdart/src/either.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' as sb;
 
-import '../../domain/entities/user.dart';
+import '../../../../core/common/entities/user.dart';
 import '../../domain/repository/auth_repository.dart';
 import '../datasources/auth_remote_data_source.dart';
 

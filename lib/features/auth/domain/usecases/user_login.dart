@@ -3,8 +3,8 @@ import 'package:blog_app/features/auth/domain/repository/auth_repository.dart';
 
 import 'package:fpdart/src/either.dart';
 
+import '../../../../core/common/entities/user.dart';
 import '../../../../core/usecase/usecase.dart';
-import '../entities/user.dart';
 
 class UserLogin implements UseCase<User, UserLoginParams> {
   final AuthRepository authRepository;
