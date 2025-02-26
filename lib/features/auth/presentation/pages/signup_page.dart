@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/utils/show_snackbar.dart';
+import '../../../blog/presentation/pages/blog_page.dart';
 import '../widgets/auth_field.dart';
 import 'login_page.dart';
 
@@ -46,13 +47,13 @@ class _SignupPageState extends State<SignupPage> {
     if(state is AuthFailure){
       showSnackBar(context, state.message);
     }
-    // else if (state is AuthSuccess) {
-    //   Navigator.pushAndRemoveUntil(
-    //     context,
-    //     BlogPage.route(),
-    //         (route) => false,
-    //   );
-    // }
+    else if (state is AuthSuccess) {
+      Navigator.pushAndRemoveUntil(
+        context,
+        BlogPage.route(),
+            (route) => false,
+      );
+    }
   },
   builder: (context, state) {
     if(state is AuthLoading){

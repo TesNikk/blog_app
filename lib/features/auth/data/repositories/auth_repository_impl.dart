@@ -2,7 +2,6 @@ import 'package:blog_app/core/error/exceptions.dart';
 import 'package:blog_app/core/error/failures.dart';
 
 import 'package:fpdart/src/either.dart';
-import 'package:supabase_flutter/supabase_flutter.dart' as sb;
 
 import '../../../../core/common/entities/user.dart';
 import '../../domain/repository/auth_repository.dart';
@@ -54,10 +53,7 @@ class AuthRepositoryImpl implements AuthRepository {
     try {
       final user = await fn();
       return Right(user);
-    } on sb.AuthException catch (e) {
-      return Left(Failure(e.message));
-    }
-    on ServerException catch (e) {
+    }  on ServerException catch (e) {
       return Left(Failure(e.message));
     }
   }
