@@ -53,6 +53,7 @@ class _AddNewBlogPageState extends State<AddNewBlogPage> {
             content: contentController.text.trim(),
             image: image!,
             topics: categories,
+
           ));
     }
   }
