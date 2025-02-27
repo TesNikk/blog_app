@@ -1,5 +1,7 @@
 import 'package:blog_app/core/error/exceptions.dart';
 import 'package:blog_app/core/error/failures.dart';
+import 'package:blog_app/core/network/connection_checker.dart';
+import 'package:blog_app/features/auth/data/models/user_model.dart';
 
 import 'package:fpdart/src/either.dart';
 
@@ -9,21 +11,29 @@ import '../datasources/auth_remote_data_source.dart';
 
 class AuthRepositoryImpl implements AuthRepository {
   final AuthRemoteDataSource remoteDataSource;
+  final ConnectionChecker connectionChecker;
 
-  AuthRepositoryImpl(this.remoteDataSource);
+  AuthRepositoryImpl(this.remoteDataSource, this.connectionChecker);
 
   @override
   Future<Either<Failure, User>> currentUser() async {
-    try{
+    try {
+      if (!await connectionChecker.isConnected) {
+        final session = remoteDataSource.currentUserSession;
+        if (session == null) {
+          return left(Failure('User not logged in'));
+        }
+        return right(UserModel(
+            id: session.user.id, name: '', email: session.user.email ?? ''));
+      }
       final user = await remoteDataSource.getCurrentUserData();
-      if(user == null){
+      if (user == null) {
         return left(Failure('User not logged in'));
       }
       return right(user);
     } on ServerException catch (e) {
       return Left(Failure(e.message));
     }
-
   }
 
   @override
@@ -51,12 +61,13 @@ class AuthRepositoryImpl implements AuthRepository {
 
   Future<Either<Failure, User>> _getUser(Future<User> Function() fn) async {
     try {
+      if (!await connectionChecker.isConnected) {
+        return Left(Failure('No internet connection'));
+      }
       final user = await fn();
       return Right(user);
-    }  on ServerException catch (e) {
+    } on ServerException catch (e) {
       return Left(Failure(e.message));
     }
   }
-
-
 }
