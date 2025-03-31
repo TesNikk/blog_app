@@ -10,6 +10,7 @@ import 'package:blog_app/features/blog/domain/entities/blog.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:uuid/uuid.dart';
 
+import '../../../../core/constants/constant.dart';
 import '../../domain/repositories/blog_repository.dart';
 import '../models/blog_model.dart';
 
@@ -30,7 +31,7 @@ class BlogRepositoryImpl implements BlogRepository {
   }) async {
     try {
       if(!await connectionChecker.isConnected){
-        return Left(Failure('No internet connection'));
+        return Left(Failure(Constants.noConnectionErrorMessage));
       }
       BlogModel blogModel = BlogModel(
           id: const Uuid().v1(),

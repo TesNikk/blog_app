@@ -1,5 +1,6 @@
 import 'package:blog_app/core/common/widgets/loader.dart';
 import 'package:blog_app/core/theme/app_pallete.dart';
+import 'package:blog_app/features/auth/presentation/widgets/drawer.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -41,6 +42,7 @@ class _BlogPageState extends State<BlogPage> {
             )
           ],
         ),
+        drawer: AppDrawer(),
         body: BlocConsumer<BlogBloc, BlogState>(
             listener: (context, state) {
               if (state is BlogFailure) {

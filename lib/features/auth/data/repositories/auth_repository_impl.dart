@@ -1,9 +1,11 @@
+import 'package:blog_app/core/constants/constant.dart';
 import 'package:blog_app/core/error/exceptions.dart';
 import 'package:blog_app/core/error/failures.dart';
 import 'package:blog_app/core/network/connection_checker.dart';
 import 'package:blog_app/features/auth/data/models/user_model.dart';
 
 import 'package:fpdart/src/either.dart';
+import 'package:fpdart/src/unit.dart';
 
 import '../../../../core/common/entities/user.dart';
 import '../../domain/repository/auth_repository.dart';
@@ -62,10 +64,19 @@ class AuthRepositoryImpl implements AuthRepository {
   Future<Either<Failure, User>> _getUser(Future<User> Function() fn) async {
     try {
       if (!await connectionChecker.isConnected) {
-        return Left(Failure('No internet connection'));
+        return Left(Failure(Constants.noConnectionErrorMessage));
       }
       final user = await fn();
       return Right(user);
+    } on ServerException catch (e) {
+      return Left(Failure(e.message));
+    }
+  }
+  @override
+  Future<Either<Failure, void>> logOut() async {
+    try {
+      await remoteDataSource.logOut();
+      return Right(unit);
     } on ServerException catch (e) {
       return Left(Failure(e.message));
     }

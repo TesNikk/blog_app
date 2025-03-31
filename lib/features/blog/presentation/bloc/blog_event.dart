@@ -17,5 +17,10 @@ final class BlogUpload extends BlogEvent{
     required this.topics,
   });
 }
+class FetchUserBlogs extends BlogEvent {
+  final String userId;
+
+  FetchUserBlogs(this.userId);
+}
 
 final class BlogGetAllBlogs extends BlogEvent{}
