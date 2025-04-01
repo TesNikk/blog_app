@@ -1,8 +1,10 @@
-import  'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/common/cubits/app_user/app_user_cubit.dart';
 import '../../../../core/theme/app_pallete.dart';
+import '../../../blog/presentation/bloc/blog_bloc.dart';
 import '../../../blog/presentation/pages/blog_page.dart';
+import '../../../blog/presentation/pages/user_uploaded_blogs_page.dart';
 import '../bloc/auth_bloc.dart';
 import '../pages/login_page.dart';
 
@@ -29,7 +31,7 @@ class _AppDrawerState extends State<AppDrawer> {
           if (state is AppUserLoggedIn) {
             final user = state.user;
 
-            if (user.name == null || user.name.isEmpty) {
+            if (user.name.isEmpty) {
               // Trigger a refresh of user data
               context.read<AuthBloc>().add(AuthIsUserLoggedIn());
               return const Center(child: CircularProgressIndicator());
@@ -42,7 +44,7 @@ class _AppDrawerState extends State<AppDrawer> {
                     color: AppPallete.gradient1,
                   ),
                   accountName: Text(
-                    user.name ?? '',
+                    user.name,
                     style: const TextStyle(
                       color: AppPallete.whiteColor,
                       fontSize: 18,
@@ -59,7 +61,7 @@ class _AppDrawerState extends State<AppDrawer> {
                   currentAccountPicture: CircleAvatar(
                     backgroundColor: AppPallete.whiteColor,
                     child: Text(
-                      user.name![0].toUpperCase(),
+                      user.name[0].toUpperCase(),
                       style: const TextStyle(
                         color: AppPallete.gradient1,
                         fontSize: 24,
@@ -69,7 +71,8 @@ class _AppDrawerState extends State<AppDrawer> {
                   ),
                 ),
                 ListTile(
-                  leading: const Icon(Icons.article, color: AppPallete.whiteColor),
+                  leading:
+                      const Icon(Icons.article, color: AppPallete.whiteColor),
                   title: const Text(
                     'Uploaded Blogs',
                     style: TextStyle(color: AppPallete.whiteColor),
@@ -77,23 +80,32 @@ class _AppDrawerState extends State<AppDrawer> {
                   onTap: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => const BlogPage()),
-                    );
+                      MaterialPageRoute(
+                          builder: (context) => const UserUploadedBlogsPage()),
+                    ).then((_) {
+                      // Refresh all blogs when returning to BlogPage
+                      if (Navigator.of(context).canPop()) {
+                        context.read<BlogBloc>().add(BlogGetAllBlogs());
+                      }
+                    });
                   },
                 ),
                 const Divider(color: AppPallete.borderColor),
                 ListTile(
-                  leading: const Icon(Icons.logout, color: AppPallete.errorColor),
+                  leading:
+                      const Icon(Icons.logout, color: AppPallete.errorColor),
                   title: const Text(
                     'Log Out',
                     style: TextStyle(color: AppPallete.errorColor),
                   ),
                   onTap: () {
                     context.read<AuthBloc>().add(AuthLogOut());
-                    context.read<AppUserCubit>().updateUser(null);  // Reset user state
+                    context
+                        .read<AppUserCubit>()
+                        .updateUser(null); // Reset user state
                     Navigator.of(context).pushAndRemoveUntil(
                       LoginPage.route(),
-                          (route) => false,
+                      (route) => false,
                     );
                   },
                 ),
@@ -111,4 +123,3 @@ class _AppDrawerState extends State<AppDrawer> {
     );
   }
 }
-

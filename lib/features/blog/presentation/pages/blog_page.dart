@@ -37,6 +37,7 @@ class _BlogPageState extends State<BlogPage> {
             IconButton(
               onPressed: () {
                 Navigator.push(context, AddNewBlogPage.route());
+                //context.read<BlogBloc>().add(BlogGetAllBlogs());
               },
               icon: Icon(CupertinoIcons.add_circled),
             )

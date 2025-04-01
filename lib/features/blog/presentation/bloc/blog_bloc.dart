@@ -25,6 +25,7 @@ class BlogBloc extends Bloc<BlogEvent, BlogState> {
     on<BlogEvent>((event, emit) => emit(BlogLoading()));
     on<BlogUpload>(_onBlogUpload);
     on<BlogGetAllBlogs>(_onFetchAllBlogs);
+    on<FetchUserBlogs>(_onFetchUserBlogs);
   }
 
   void _onBlogUpload(BlogUpload event, Emitter<BlogState> emit) async {
@@ -48,4 +49,16 @@ class BlogBloc extends Bloc<BlogEvent, BlogState> {
       (r) => emit(BlogDisplaySuccess( r)),
     );
   }
+  void _onFetchUserBlogs(FetchUserBlogs event, Emitter<BlogState> emit) async {
+    emit(BlogLoading()); // Show loading state
+    final res = await _getAllBlogs(NoParams()); // Fetch all blogs (modify if needed)
+    res.fold(
+          (l) => emit(BlogFailure(l.message)),
+          (r) {
+        final userBlogs = r.where((blog) => blog.posterId == event.userId).toList();
+        emit(BlogDisplaySuccess(userBlogs));
+      },
+    );
+  }
+
 }
