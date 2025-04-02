@@ -22,40 +22,46 @@ class BlogCard extends StatelessWidget {
         margin: const EdgeInsets.all(16).copyWith(bottom: 4),
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-            color: color,
-            borderRadius: BorderRadius.circular(10),
+          color: color,
+          borderRadius: BorderRadius.circular(10),
         ),
-        child:  Column(
+        child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: Row(
-                    children: blog.topics
-                        .map(
-                          (e) => Padding(
-                        padding: const EdgeInsets.all(5.0),
-                        child: Chip(label: Text(e)),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      children: blog.topics
+                          .map(
+                            (e) => Padding(
+                          padding: const EdgeInsets.all(5.0),
+                          child: Chip(label: Text(e)),
+                        ),
+                      )
+                          .toList(),
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Flexible(
+                    child: Text(
+                      blog.title,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold,
                       ),
-                    )
-                        .toList(),
+                    ),
                   ),
-                ),
-                Text(
-                  blog.title,
-                  style: const TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(height: 50,),
-                Text('${calculateReadingTime(blog.content)} min '),
-              ],
+                ],
+              ),
             ),
+            Text('${calculateReadingTime(blog.content)} min'),
           ],
         ),
       ),
