@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:bloc/bloc.dart';
+import 'package:blog_app/features/blog/domain/repositories/blog_repository.dart';
 import 'package:blog_app/features/blog/domain/usecases/get_all_blogs.dart';
 import 'package:blog_app/features/blog/domain/usecases/upload_blog.dart';
 import 'package:flutter/cupertino.dart';
@@ -15,17 +16,22 @@ part 'blog_state.dart';
 class BlogBloc extends Bloc<BlogEvent, BlogState> {
   final UploadBlog _uploadBlog;
   final GetAllBlogs _getAllBlogs;
+  final BlogRepository _blogRepository;
 
   BlogBloc({
     required UploadBlog uploadBlog,
     required GetAllBlogs getAllBlogs,
+    required BlogRepository blogRepository,
 }) : _uploadBlog = uploadBlog,
         _getAllBlogs = getAllBlogs,
+        _blogRepository = blogRepository,
         super(BlogInitial()) {
     on<BlogEvent>((event, emit) => emit(BlogLoading()));
     on<BlogUpload>(_onBlogUpload);
     on<BlogGetAllBlogs>(_onFetchAllBlogs);
     on<FetchUserBlogs>(_onFetchUserBlogs);
+    on<DeleteBlog>(_onDeleteBlog);
+
   }
 
   void _onBlogUpload(BlogUpload event, Emitter<BlogState> emit) async {
@@ -60,5 +66,20 @@ class BlogBloc extends Bloc<BlogEvent, BlogState> {
       },
     );
   }
+  void _onDeleteBlog(DeleteBlog event, Emitter<BlogState> emit) async {
+    try {
+      emit(BlogLoading());
+      await _blogRepository.deleteBlog(event.blogId);
+      final updatedBlogsResult = await _blogRepository.getAllBlogs();
+      updatedBlogsResult.fold(
+            (failure) => emit(BlogFailure(failure.message)),
+            (updatedBlogs) => emit(BlogDisplaySuccess(updatedBlogs)),
+      );
+    } catch (e) {
+      emit(BlogFailure(e.toString()));
+    }
+  }
+
+
 
 }

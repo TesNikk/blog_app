@@ -46,35 +46,42 @@ class _UserUploadedBlogsPageState extends State<UserUploadedBlogsPage> {
             if (state is BlogLoading) {
               return const Center(child: CircularProgressIndicator());
             } else if (state is BlogDisplaySuccess) {
-              final userBlogs = state.blogs;
-              if (userBlogs.isEmpty) {
-                return const Center(
-                  child: Text(
-                    "You haven't uploaded any blogs yet.",
-                    style: TextStyle(
-                      color: AppPallete.whiteColor,
-                      fontSize: 18,
-                      fontWeight: FontWeight.w500,
+              final user = context.read<AppUserCubit>().state;
+              if (user is AppUserLoggedIn) {
+                final userBlogs = state.blogs.where((blog) => blog.posterId == user.user.id).toList();
+                if (userBlogs.isEmpty) {
+                  return const Center(
+                    child: Text(
+                      "You haven't uploaded any blogs yet.",
+                      style: TextStyle(
+                        color: AppPallete.whiteColor,
+                        fontSize: 18,
+                        fontWeight: FontWeight.w500,
+                      ),
                     ),
-                  ),
+                  );
+                }
+                return ListView.builder(
+                  itemCount: userBlogs.length,
+                  itemBuilder: (context, index) {
+                    final blog = userBlogs[index];
+                    final tileColor = index % 3 == 0
+                        ? AppPallete.gradient1
+                        : index % 3 == 1
+                        ? AppPallete.gradient2
+                        : AppPallete.gradient3;
+
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 5),
+                      child: BlogListTile(blog: blog, color: tileColor,
+                        onDelete: () {
+                          context.read<BlogBloc>().add(DeleteBlog(blog.id));
+                        },
+                      ),
+                    );
+                  },
                 );
               }
-              return ListView.builder(
-                itemCount: userBlogs.length,
-                itemBuilder: (context, index) {
-                  final blog = userBlogs[index];
-                  final tileColor = index % 3 == 0
-                      ? AppPallete.gradient1
-                      : index % 3 == 1
-                      ? AppPallete.gradient2
-                      : AppPallete.gradient3;
-
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 5),
-                    child: BlogListTile(blog: blog, color: tileColor),
-                  );
-                },
-              );
             } else if (state is BlogFailure) {
               return Center(
                 child: Text(

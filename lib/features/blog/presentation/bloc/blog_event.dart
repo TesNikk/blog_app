@@ -22,5 +22,10 @@ class FetchUserBlogs extends BlogEvent {
 
   FetchUserBlogs(this.userId);
 }
+class DeleteBlog extends BlogEvent {
+  final String blogId;
+
+  DeleteBlog(this.blogId);
+}
 
 final class BlogGetAllBlogs extends BlogEvent{}

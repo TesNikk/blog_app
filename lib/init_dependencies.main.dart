@@ -104,6 +104,7 @@ void _initBlog() {
           () => BlogBloc(
         uploadBlog: serviceLocator(),
         getAllBlogs: serviceLocator(),
+        blogRepository: serviceLocator(),
       ),
     );
 }
