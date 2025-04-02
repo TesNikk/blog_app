@@ -62,9 +62,16 @@ class _UserUploadedBlogsPageState extends State<UserUploadedBlogsPage> {
               return ListView.builder(
                 itemCount: userBlogs.length,
                 itemBuilder: (context, index) {
+                  final blog = userBlogs[index];
+                  final tileColor = index % 3 == 0
+                      ? AppPallete.gradient1
+                      : index % 3 == 1
+                      ? AppPallete.gradient2
+                      : AppPallete.gradient3;
+
                   return Padding(
                     padding: const EdgeInsets.symmetric(vertical: 5),
-                    child: BlogListTile(blog: userBlogs[index]),
+                    child: BlogListTile(blog: blog, color: tileColor),
                   );
                 },
               );
